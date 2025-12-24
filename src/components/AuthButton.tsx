@@ -16,25 +16,18 @@ export default function AuthButton() {
   }, []);
 
   const handleSignIn = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      alert("Google Sign-In failed");
-    }
+    await signInWithPopup(auth, googleProvider);
   };
 
   const handleSignOut = async () => {
     await signOut(auth);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return null;
 
   return user ? (
-    <div>
-      <span>Welcome, {user.displayName || user.email}!</span>
-      <button onClick={handleSignOut} style={{ marginLeft: 8 }}>Sign out</button>
-    </div>
+    <button onClick={handleSignOut}>تسجيل الخروج</button>
   ) : (
-    <button onClick={handleSignIn}>Sign in with Google</button>
+    <button onClick={handleSignIn}>تسجيل الدخول باستخدام جوجل</button>
   );
 }
