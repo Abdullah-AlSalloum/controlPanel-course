@@ -6,9 +6,12 @@ import { usePathname } from "next/navigation";
 import { FiHome, FiBookOpen, FiVideo, FiEdit3, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 
+import { FiUser } from "react-icons/fi";
+
 const navItems = [
   { href: "/", label: "لوحة التحكم", icon: <FiHome size={20} /> },
   { href: "/courses", label: "الدورات", icon: <FiBookOpen size={20} /> },
+  { href: "/profile", label: "الملف الشخصي", icon: <FiUser size={20} /> },
   // Removed global videos and quizzes links
 ];
 
