@@ -15,6 +15,7 @@ interface Quiz {
   title_ar: string;
   title_en: string;
   questions: any[];
+  published?: boolean;
 }
 
 export default function QuizzesPage() {
@@ -27,6 +28,7 @@ export default function QuizzesPage() {
     title_ar: "",
     title_en: "",
     questions: [] as any[],
+    published: false,
   });
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
 
@@ -63,11 +65,16 @@ export default function QuizzesPage() {
       await updateDoc(doc(db, "quizzes", editingQuiz.id), form);
       setQuizzes((prev) => prev.map((q) => (q.id === editingQuiz.id ? { ...q, ...form } : q)));
     } else {
-      const docRef = await addDoc(collection(db, "quizzes"), form);
-      setQuizzes((prev) => [...prev, { ...form, id: docRef.id }]);
+      const docRef = await addDoc(collection(db, "quizzes"), { ...form, published: false });
+      setQuizzes((prev) => [...prev, { ...form, id: docRef.id, published: false }]);
     }
     setEditingQuiz(null);
-    setForm({ courseId: "", title_ar: "", title_en: "", questions: [] });
+    setForm({ courseId: "", title_ar: "", title_en: "", questions: [], published: false });
+    // Publish/unpublish quiz
+    const handlePublish = async (id: string, publish: boolean) => {
+      await updateDoc(doc(db, "quizzes", id), { published: publish });
+      setQuizzes((prev) => prev.map((q) => q.id === id ? { ...q, published: publish } : q));
+    };
   };
 
   const handleEdit = (quiz: Quiz) => {
@@ -196,6 +203,21 @@ export default function QuizzesPage() {
                       >
                         حذف
                       </button>
+                      {quiz.published ? (
+                        <button
+                          className="bg-gray-700 text-white px-2 py-1 rounded hover:bg-gray-800 transition"
+                          onClick={() => handlePublish(quiz.id, false)}
+                        >
+                          إلغاء النشر
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
+                          onClick={() => handlePublish(quiz.id, true)}
+                        >
+                          إرسال إلى التطبيق
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))

@@ -26,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ fontFamily: 'Cairo, Noto Sans Arabic, sans-serif' }}>
         <div className="flex min-h-screen flex-row-reverse">
           <Sidebar />

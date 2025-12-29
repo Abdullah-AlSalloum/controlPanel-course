@@ -14,6 +14,14 @@ interface Course {
   id: string;
   titleAr: string;
 }
+  import VideoQuiz, { Question as VideoQuizQuestion } from "./VideoQuiz";
+
+interface Question {
+  question_ar: string;
+  options_ar: string[];
+  correct_answer_ar: string;
+  score?: number;
+}
 
 interface Video {
   id: string;
@@ -22,16 +30,22 @@ interface Video {
   courseId: string;
   order: number;
   youtubeId?: string; // YouTube link or ID (optional)
+  questions?: Question[];
+  published?: boolean;
 }
 
 export default function VideosPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState<Partial<Video>>({});
+  const [form, setForm] = useState<Partial<Video>>({ questions: [], published: false });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+
+  // Question form state for adding/editing questions
+  const [questionForm, setQuestionForm] = useState<Partial<Question>>({ options_ar: ["", "", "", ""] });
+  const [editingQuestionIdx, setEditingQuestionIdx] = useState<number | null>(null);
 
   // Fetch courses for dropdown
   const fetchCourses = async () => {
@@ -79,9 +93,10 @@ export default function VideosPage() {
           ...form,
           order: Number(form.order),
           youtubeId: form.youtubeId || "",
+          published: false, // New videos are drafts by default
         });
       }
-      setForm({});
+      setForm({ published: false });
       setEditingId(null);
       fetchVideos();
     } catch (err) {
@@ -97,6 +112,12 @@ export default function VideosPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this video?")) return;
     await deleteDoc(doc(db, "videos", id));
+    fetchVideos();
+  };
+
+  // Publish/unpublish video
+  const handlePublish = async (id: string, publish: boolean) => {
+    await updateDoc(doc(db, "videos", id), { published: publish });
     fetchVideos();
   };
 
@@ -167,17 +188,28 @@ export default function VideosPage() {
           className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           required
         />
-        <div className="col-span-1 md:col-span-2 flex gap-3 justify-end mt-2">
+        {/* Per-video quiz questions UI */}
+        <div className="col-span-1 md:col-span-2">
+          <h3 className="font-bold mb-2">أسئلة الاختبار لهذا الفيديو</h3>
+          {(form.questions || []).map((q, idx) => (
+            <div key={idx} className="mb-2 p-2 border rounded bg-zinc-50 dark:bg-zinc-800">
+              <div><b>س:</b> {q.question_ar}</div>
+            </div>
+          ))}
+          <VideoQuiz
+            questions={form.questions || []}
+            setQuestions={qs => setForm({ ...form, questions: qs })}
+          />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-blue-700 transition disabled:opacity-60"
+            className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-blue-700 transition mt-4"
           >
             {editingId ? "تحديث" : "إضافة"} فيديو
           </button>
           {editingId && (
             <button
               type="button"
-              className="bg-gray-400 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-gray-500 transition"
+              className="bg-gray-400 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-gray-500 transition mt-4 ml-2"
               onClick={() => {
                 setForm({});
                 setEditingId(null);
@@ -203,15 +235,15 @@ export default function VideosPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-blue-700 dark:text-blue-200 font-bold text-lg">جاري التحميل...</td>
+                <td colSpan={6} className="p-6 text-center text-blue-700 dark:text-blue-200 font-bold text-lg">جاري التحميل...</td>
               </tr>
             ) : ([...videos].filter(v => !selectedCourseId || v.courseId === selectedCourseId).length === 0) ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-zinc-500 dark:text-zinc-300 font-bold text-lg">لا توجد فيديوهات.</td>
+                <td colSpan={6} className="p-6 text-center text-zinc-500 dark:text-zinc-300 font-bold text-lg">لا توجد فيديوهات.</td>
               </tr>
             ) : (
               [...videos]
-                .filter(v => !selectedCourseId || v.courseId === selectedCourseId)
+                .filter(v => (!selectedCourseId || v.courseId === selectedCourseId))
                 .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                 .map((video) => (
                   <tr key={video.id} className="border-t border-zinc-200 dark:border-zinc-800 group hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
@@ -232,6 +264,21 @@ export default function VideosPage() {
                       >
                         حذف
                       </button>
+                      {video.published ? (
+                        <button
+                          className="bg-gray-700 text-white px-4 py-1 rounded-xl font-bold shadow hover:bg-gray-800 transition"
+                          onClick={() => handlePublish(video.id, false)}
+                        >
+                          إلغاء النشر
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-green-600 text-white px-4 py-1 rounded-xl font-bold shadow hover:bg-green-700 transition"
+                          onClick={() => handlePublish(video.id, true)}
+                        >
+                          إرسال إلى التطبيق
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))
