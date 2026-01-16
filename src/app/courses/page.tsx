@@ -43,8 +43,20 @@ export default function CoursesPage() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    const { name, type, value } = e.target;
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setForm({
+        ...form,
+        [name]: checked,
+      });
+    } else {
+      setForm({
+        ...form,
+        [name]: value,
+      });
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,11 +66,12 @@ export default function CoursesPage() {
       if (editingId) {
         await updateDoc(doc(db, "courses", editingId), {
           ...form,
+          published: form.published ?? false,
         });
       } else {
         const docRef = await addDoc(collection(db, "courses"), {
           ...form,
-          published: false, // New courses are drafts by default
+          published: form.published ?? false, // New courses are drafts by default unless checked
         });
         await updateDoc(docRef, { id: docRef.id });
       }
@@ -67,7 +80,8 @@ export default function CoursesPage() {
         titleEn: "",
         descriptionAr: "",
         instructor: "",
-        imageUrl: ""
+        imageUrl: "",
+        published: false
       });
       setEditingId(null);
       fetchCourses();
@@ -76,7 +90,7 @@ export default function CoursesPage() {
       setError("Error saving course: " + (err instanceof Error ? err.message : String(err)));
     }
     setUploading(false);
-  };
+  }
 
   const handleEdit = (course: Course) => {
     setForm(course);
@@ -170,6 +184,18 @@ export default function CoursesPage() {
           className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 col-span-1 md:col-span-2 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           required
         />
+        <div className="flex items-center col-span-1 md:col-span-2 gap-4 mb-2">
+          <label className="flex items-center gap-2 font-bold">
+            <input
+              type="checkbox"
+              name="published"
+              checked={!!form.published}
+              onChange={handleChange}
+              className="w-5 h-5 accent-blue-600"
+            />
+            نشر الدورة (تظهر في التطبيق)
+          </label>
+        </div>
         <div className="col-span-1 md:col-span-2 flex gap-3 justify-end mt-2">
           <button
             type="submit"

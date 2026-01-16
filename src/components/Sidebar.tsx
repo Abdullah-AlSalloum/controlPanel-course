@@ -63,7 +63,7 @@ function Sidebar() {
               </Link>
             ))}
           </nav>
-          <div className="mt-auto pt-8 mb-15">
+          <div className="mt-auto pt-8 mb-20">
             <button
               onClick={handleLogout}
               className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 text-lg bg-red-600 hover:bg-red-700 text-white w-full"
