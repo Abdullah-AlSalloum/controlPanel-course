@@ -44,37 +44,41 @@ function Sidebar() {
         style={{ minHeight: '100vh' }}
       >
         <h2 className="text-2xl font-bold mb-10 text-right tracking-tight">لوحة الإدارة</h2>
-        <nav className="flex flex-col gap-3 text-right">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 text-lg ${
-                pathname === item.href
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "hover:bg-zinc-800 hover:text-blue-300"
-              }`}
-              style={{ direction: 'rtl' }}
-              onClick={() => setOpen(false)}
+        <div className="flex flex-col flex-1 h-full">
+          <nav className="flex flex-col gap-3 text-right flex-grow">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 text-lg ${
+                  pathname === item.href
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "hover:bg-zinc-800 hover:text-blue-300"
+                }`}
+                style={{ direction: 'rtl' }}
+                onClick={() => setOpen(false)}
+              >
+                <span className="ml-2">{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-auto pt-8 mb-15">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 text-lg bg-red-600 hover:bg-red-700 text-white w-full"
+              style={{ direction: 'rtl', textAlign: 'right' }}
             >
-              <span className="ml-2">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 text-lg bg-red-600 hover:bg-red-700 mt-8 text-white"
-            style={{ direction: 'rtl', textAlign: 'right' }}
-          >
-            <span className="ml-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18 15l3-3m0 0l-3-3m3 3H9" />
-              </svg>
-            </span>
-            <span>تسجيل الخروج</span>
-          </button>
-        </nav>
+              <span className="ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 15l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+              </span>
+              <span>تسجيل الخروج</span>
+            </button>
+          </div>
+        </div>
       </aside>
       {/* Overlay for mobile */}
       {open && (
