@@ -70,11 +70,12 @@ export default function QuizzesPage() {
     }
     setEditingQuiz(null);
     setForm({ courseId: "", title_ar: "", title_en: "", questions: [], published: false });
-    // Publish/unpublish quiz
-    const handlePublish = async (id: string, publish: boolean) => {
-      await updateDoc(doc(db, "quizzes", id), { published: publish });
-      setQuizzes((prev) => prev.map((q) => q.id === id ? { ...q, published: publish } : q));
-    };
+  };
+
+  // Publish/unpublish quiz
+  const handlePublish = async (id: string, publish: boolean) => {
+    await updateDoc(doc(db, "quizzes", id), { published: publish });
+    setQuizzes((prev) => prev.map((q) => q.id === id ? { ...q, published: publish } : q));
   };
 
   const handleEdit = (quiz: Quiz) => {
@@ -156,7 +157,7 @@ export default function QuizzesPage() {
               className="bg-gray-400 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-gray-500 transition"
               onClick={() => {
                 setEditingQuiz(null);
-                setForm({ courseId: "", title_ar: "", title_en: "", questions: [] });
+                setForm({ courseId: "", title_ar: "", title_en: "", questions: [], published: false });
               }}
             >
               إلغاء
