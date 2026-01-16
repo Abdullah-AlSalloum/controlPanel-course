@@ -84,6 +84,7 @@ export default function QuizzesPage() {
       title_ar: quiz.title_ar,
       title_en: quiz.title_en,
       questions: quiz.questions || [],
+      published: quiz.published ?? false,
     });
   };
 
