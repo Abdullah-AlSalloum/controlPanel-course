@@ -23,7 +23,7 @@ interface Course {
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState<Partial<Course>>({});
+  const [form, setForm] = useState<Partial<Course>>({ published: true });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
   const [uploading, setUploading] = useState(false);
@@ -71,7 +71,7 @@ export default function CoursesPage() {
       } else {
         const docRef = await addDoc(collection(db, "courses"), {
           ...form,
-          published: form.published ?? false, // New courses are drafts by default unless checked
+          published: form.published ?? true, // New courses are published by default unless unchecked
         });
         await updateDoc(docRef, { id: docRef.id });
       }
@@ -81,7 +81,7 @@ export default function CoursesPage() {
         descriptionAr: "",
         instructor: "",
         imageUrl: "",
-        published: false
+        published: true
       });
       setEditingId(null);
       fetchCourses();
@@ -98,7 +98,7 @@ export default function CoursesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this course?")) return;
+    if (!confirm("هل أنت متأكد أنك تريد حذف هذه الدورة؟")) return;
     await deleteDoc(doc(db, "courses", id));
     fetchCourses();
   };
