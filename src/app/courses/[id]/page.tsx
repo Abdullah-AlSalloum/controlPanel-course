@@ -60,6 +60,7 @@ const CoursePage = () => {
     };
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,44 +90,31 @@ const CoursePage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
     try {
-      // Calculate next order automatically
-      const nextOrder = videos.length > 0 ? Math.max(...videos.map(v => v.order || 0)) + 1 : 1;
-      let youtubeId = form.youtubeId || "";
-      if (form.youtubeId) {
-        youtubeId = extractYouTubeId(form.youtubeId);
-      }
       if (editingId) {
-        await updateDoc(doc(db, "videos", editingId), {
-          title_ar: form.title_ar,
-          courseId,
-          order: form.order || nextOrder,
-          youtubeId,
-          questions: form.questions || [],
-        });
+        await updateDoc(doc(db, "videos", editingId), form);
+        setEditingId(null);
+        setShowModal(false); // Close modal after update
+        setForm({});
       } else {
-        await addDoc(collection(db, "videos"), {
-          title_ar: form.title_ar,
-          courseId,
-          order: nextOrder,
-          youtubeId,
-          questions: form.questions || [],
-        });
+        await addDoc(collection(db, "videos"), { ...form, courseId });
+        setForm({ questions: [] });
       }
-      setForm({ questions: [] });
-      setEditingId(null);
       // Refresh videos
       const videosSnap = await getDocs(query(collection(db, "videos"), where("courseId", "==", courseId)));
       setVideos(videosSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Video)));
     } catch (err) {
       setError("حدث خطأ أثناء حفظ الفيديو. حاول مرة أخرى.");
     }
+    setLoading(false);
   };
 
   const handleEdit = (video: Video) => {
     setForm({ ...video, questions: video.questions || [] });
     setEditingId(video.id);
+    setShowModal(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -255,6 +243,68 @@ const CoursePage = () => {
           )}
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 w-[80vw] h-[70vh] max-w-3xl relative flex flex-col overflow-hidden">
+            <button
+              className="absolute top-3 left-3 text-2xl font-bold text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
+              onClick={() => { setShowModal(false); setEditingId(null); setForm({}); }}
+            >
+              ×
+            </button>
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-blue-700 dark:text-blue-200"> تعديل الفيديو</h2>
+            <div className="flex-1 overflow-y-auto pr-2">
+              <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 pr-1">عنوان الفيديو (بالعربية) <span className="text-red-500">*</span></label>
+                  <input
+                    name="title_ar"
+                    placeholder="مثال: مقدمة الدورة"
+                    value={form.title_ar || ""}
+                    onChange={handleChange}
+                    className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-base"
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 pr-1">رابط أو معرف فيديو يوتيوب</label>
+                  <input
+                    name="youtubeId"
+                    placeholder="مثال: https://youtu.be/abc123xyz00 أو abc123xyz00"
+                    value={form.youtubeId || ""}
+                    onChange={handleChange}
+                    className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-base"
+                  />
+                </div>
+                {/* Per-video quiz questions UI */}
+                <div className="pt-2">
+                  <VideoQuiz
+                    questions={form.questions || []}
+                    setQuestions={qs => setForm({ ...form, questions: qs })}
+                  />
+                </div>
+                <div className="flex gap-3 justify-end mt-4">
+                  <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-7 py-2.5 rounded-xl font-bold shadow hover:bg-blue-700 transition disabled:opacity-60 text-base"
+                  >
+                    تحديث الفيديو
+                  </button>
+                  <button
+                    type="button"
+                    className="bg-gray-400 text-white px-7 py-2.5 rounded-xl font-bold shadow hover:bg-gray-500 transition text-base"
+                    onClick={() => { setShowModal(false); setEditingId(null); setForm({}); }}
+                  >
+                    إلغاء
+                  </button>
+                </div>
+                {error && <div className="text-red-600 font-bold text-right mt-2">{error}</div>}
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
