@@ -55,47 +55,47 @@ export default function ProfilePage() {
   }
   return (
     <div className="max-w-xl mx-auto w-full px-2 md:px-0 mt-10" dir="rtl" style={{ fontFamily: 'Cairo, Noto Sans Arabic, sans-serif' }}>
-      <h1 className="text-3xl font-extrabold mb-8 text-blue-700 dark:text-blue-300 text-right">الملف الشخصي</h1>
-      <form onSubmit={handleUpdateProfile} className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 mb-10">
+      <h1 className="text-3xl font-extrabold mb-8 text-teal-700 dark:text-teal-300 text-right">الملف الشخصي</h1>
+      <form onSubmit={handleUpdateProfile} className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mb-10">
         <div className="mb-4">
-          <label className="block mb-2 font-semibold text-zinc-700 dark:text-zinc-200">اسم المستخدم</label>
+          <label className="block mb-2 font-semibold text-slate-700 dark:text-slate-200">اسم المستخدم</label>
           <input
             type="text"
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
-            className="w-full p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2 font-semibold text-zinc-700 dark:text-zinc-200">البريد الإلكتروني</label>
+          <label className="block mb-2 font-semibold text-slate-700 dark:text-slate-200">البريد الإلكتروني</label>
           <div
-            className="w-full p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-right text-zinc-400 select-none cursor-default"
+            className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 text-right text-slate-400 select-none cursor-default"
             style={{ userSelect: 'none' }}
           >
             {email}
           </div>
         </div>
         <div className="mb-4">
-          <label className="block mb-2 font-semibold text-zinc-700 dark:text-zinc-200">كلمة المرور الجديدة (اختياري)</label>
+          <label className="block mb-2 font-semibold text-slate-700 dark:text-slate-200">كلمة المرور الجديدة (اختياري)</label>
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
             placeholder="اتركه فارغًا إذا لم ترغب في التغيير"
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2 font-semibold text-zinc-700 dark:text-zinc-200">تأكيد كلمة المرور الجديدة</label>
+          <label className="block mb-2 font-semibold text-slate-700 dark:text-slate-200">تأكيد كلمة المرور الجديدة</label>
           <input
             type="password"
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
-            className="w-full p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
             placeholder="أعد كتابة كلمة المرور الجديدة"
           />
         </div>
-        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-blue-700 transition">تحديث الملف الشخصي</button>
+        <button type="submit" className="bg-teal-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-teal-700 transition">تحديث الملف الشخصي</button>
         {message && <div className="text-green-600 font-bold text-right mt-2">{message}</div>}
         {error && <div className="text-red-600 font-bold text-right mt-2">{error}</div>}
       </form>

@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ fontFamily: 'Cairo, Noto Sans Arabic, sans-serif' }}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-slate-900 dark:text-slate-100`} style={{ fontFamily: 'Cairo, Noto Sans Arabic, sans-serif' }}>
         <AuthGuard>
           <ClientLayout>{children}</ClientLayout>
         </AuthGuard>

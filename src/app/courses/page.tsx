@@ -131,10 +131,10 @@ export default function CoursesPage() {
 
   return (
     <div className="max-w-5xl mx-auto w-full px-2 md:px-10" dir="rtl" style={{ fontFamily: 'Cairo, Noto Sans Arabic, sans-serif' }}>
-      <h1 className="text-3xl font-extrabold mb-8 text-blue-700 dark:text-blue-300 text-right">إدارة الدورات</h1>
+      <h1 className="text-3xl font-extrabold mb-8 text-teal-700 dark:text-teal-300 text-right">إدارة الدورات</h1>
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 mb-10"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mb-10"
         encType="multipart/form-data"
       >
                 {/* حقل صورة الدورة باستخدام Cloudinary */}
@@ -142,7 +142,7 @@ export default function CoursesPage() {
                   <label className="font-bold">صورة الدورة (اختياري)</label>
                   <button
                     type="button"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-blue-700 transition"
+                    className="bg-teal-600 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-teal-700 transition"
                     onClick={() => openCloudinaryWidget((url) => setForm({ ...form, imageUrl: url }))}
                   >
                     رفع صورة الدورة
@@ -156,7 +156,7 @@ export default function CoursesPage() {
           placeholder="اسم الدورة (بالعربية)"
           value={form.titleAr || ""}
           onChange={handleChange}
-          className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          className="p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
           required
         />
         <input
@@ -164,7 +164,7 @@ export default function CoursesPage() {
           placeholder="اسم الدورة (بالإنجليزية)"
           value={form.titleEn || ""}
           onChange={handleChange}
-          className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          className="p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
           required
         />
         <input
@@ -172,7 +172,7 @@ export default function CoursesPage() {
           placeholder="اسم المدرس"
           value={form.instructor || ""}
           onChange={handleChange}
-          className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          className="p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
           required
         />
         {/* حقل وصف الدورة */}
@@ -181,7 +181,7 @@ export default function CoursesPage() {
           placeholder="وصف الدورة (بالعربية)"
           value={form.descriptionAr || ""}
           onChange={handleChange}
-          className="p-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 col-span-1 md:col-span-2 text-right focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          className="p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 col-span-1 md:col-span-2 text-right focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
           required
         />
         <div className="flex items-center col-span-1 md:col-span-2 gap-4 mb-2">
@@ -191,7 +191,7 @@ export default function CoursesPage() {
               name="published"
               checked={!!form.published}
               onChange={handleChange}
-              className="w-5 h-5 accent-blue-600"
+              className="w-5 h-5 accent-teal-600"
             />
             نشر الدورة (تظهر في التطبيق)
           </label>
@@ -199,7 +199,7 @@ export default function CoursesPage() {
         <div className="col-span-1 md:col-span-2 flex gap-3 justify-end mt-2">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-blue-700 transition disabled:opacity-60"
+            className="bg-teal-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-teal-700 transition disabled:opacity-60"
             disabled={uploading}
           >
             {uploading ? (editingId ? "جاري التحديث..." : "جاري الإضافة...") : (editingId ? "تحديث" : "إضافة")}
@@ -207,7 +207,7 @@ export default function CoursesPage() {
           {editingId && (
             <button
               type="button"
-              className="bg-gray-400 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-gray-500 transition"
+              className="bg-slate-400 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-slate-500 transition"
               onClick={() => {
                 setForm({});
                 setEditingId(null);
@@ -221,36 +221,36 @@ export default function CoursesPage() {
       </form>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
         {loading ? (
-          <div className="col-span-full text-center text-blue-700 dark:text-blue-200 font-bold text-lg">جاري التحميل...</div>
+          <div className="col-span-full text-center text-teal-700 dark:text-teal-200 font-bold text-lg">جاري التحميل...</div>
         ) : courses.length === 0 ? (
           <div className="col-span-full text-center text-zinc-500 dark:text-zinc-300 font-bold text-lg">لا توجد دورات.</div>
         ) : (
           courses.map((course) => (
             <div
               key={course.id}
-              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-8 flex flex-col hover:shadow-2xl transition-all duration-200 group min-w-[320px]"
+              className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 flex flex-col hover:shadow-2xl transition-all duration-200 group min-w-[320px]"
             >
               {course.imageUrl && (
                 <img src={course.imageUrl} alt="صورة الدورة" className="w-32 h-32 object-cover rounded-xl mb-4 mx-auto" />
               )}
-              <h2 className="text-xl font-extrabold text-zinc-900 dark:text-white mb-2 group-hover:text-blue-700 transition">{course.titleAr} / {course.titleEn}</h2>
-              <div className="text-zinc-500 dark:text-zinc-300 mb-2 font-medium">{course.instructor}</div>
-              <div className="text-zinc-600 dark:text-zinc-200 mb-4 line-clamp-2">{course.descriptionAr}</div>
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mb-2 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition">{course.titleAr} / {course.titleEn}</h2>
+              <div className="text-slate-500 dark:text-slate-300 mb-2 font-medium">{course.instructor}</div>
+              <div className="text-slate-600 dark:text-slate-200 mb-4 line-clamp-2">{course.descriptionAr}</div>
               <div className="grid grid-cols-2 gap-3 mt-auto w-full">
                 <button
-                  className="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-blue-700 transition col-span-2"
+                  className="bg-teal-600 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-teal-700 transition col-span-2"
                   onClick={() => window.location.href = `/courses/${course.id}`}
                 >
                   إدارة الفيديوهات
                 </button>
                 <button
-                  className="bg-green-600 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-green-700 transition col-span-2"
+                  className="bg-teal-500 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-teal-600 transition col-span-2"
                   onClick={() => window.location.href = `/courses/${course.id}/final-quiz`}
                 >
                   إدارة الاختبار النهائي
                 </button>
                 <button
-                  className="bg-yellow-500 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-yellow-600 transition"
+                  className="bg-slate-400 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-slate-500 transition"
                   onClick={e => { e.stopPropagation(); handleEdit(course); }}
                 >
                   تعديل
@@ -263,7 +263,7 @@ export default function CoursesPage() {
                 </button>
                 {!course.published && (
                   <button
-                    className="bg-blue-700 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-blue-900 transition col-span-2"
+                    className="bg-teal-700 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-teal-900 transition col-span-2"
                     onClick={async e => {
                       e.stopPropagation();
                       await updateDoc(doc(db, "courses", course.id), { published: true });

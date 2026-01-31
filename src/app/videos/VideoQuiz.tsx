@@ -15,8 +15,7 @@ interface VideoQuizProps {
 const emptyOptions = ["", "", "", ""];
 
 export default function VideoQuiz({ questions, setQuestions }: VideoQuizProps) {
-  const [questionForm, setQuestionForm] = useState<Partial<Question>>({ options_ar: [...emptyOptions] });
-  const [editingQuestionIdx, setEditingQuestionIdx] = useState<number | null>(null);
+  // Inline editing: no per-question edit state
 
   return (
     <div>
@@ -24,36 +23,58 @@ export default function VideoQuiz({ questions, setQuestions }: VideoQuizProps) {
       {(questions || []).map((q, idx) => (
         <div
           key={idx}
-          className="mb-4 pb-4 flex flex-col gap-2 text-right px-2 sm:px-6"
+          className="mb-4 pb-4 flex flex-col gap-2 text-right px-2 sm:px-6 border-b border-zinc-200 dark:border-zinc-700"
           style={{ direction: 'rtl' }}
         >
           <div className="flex items-center gap-2 text-lg font-bold text-blue-300">
             <span className="inline-block w-6 text-blue-400">س:</span>
-            <span>{q.question_ar}</span>
+            <input
+              className="p-2 w-full rounded bg-zinc-200 dark:bg-zinc-800 focus:outline-none"
+              placeholder="نص السؤال (بالعربية)"
+              value={q.question_ar}
+              onChange={e => {
+                const updated = [...questions];
+                updated[idx] = { ...q, question_ar: e.target.value };
+                setQuestions(updated);
+              }}
+            />
           </div>
           <div className="flex flex-col gap-2 text-sm text-zinc-300 mt-1">
             <span className="inline-block w-20 text-yellow-400 mb-1">الخيارات:</span>
-            <div className="flex flex-col gap-2 w-full">
-              {q.options_ar.map((opt, i) => (
-                <span key={i} className="block px-3 py-2 rounded bg-zinc-800 text-yellow-200 w-full text-right">{opt}</span>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col gap-1 text-sm mt-2 w-full">
-            <span className="inline-block w-24 text-green-400 mb-1">الإجابة الصحيحة:</span>
-            <span className="block px-3 py-2 rounded bg-green-900/60 text-green-200 font-bold w-full text-right">{q.correct_answer_ar}</span>
+            {[0,1,2,3].map(i => (
+              <div key={i} className="mb-2 flex items-center gap-2">
+                <input
+                  className="p-2 w-full rounded bg-zinc-200 dark:bg-zinc-800 focus:outline-none"
+                  placeholder={`الخيار ${i+1}`}
+                  value={q.options_ar?.[i] || ""}
+                  onChange={e => {
+                    const opts = [...(q.options_ar || ["", "", "", ""])]
+                    opts[i] = e.target.value;
+                    const updated = [...questions];
+                    updated[idx] = { ...q, options_ar: opts };
+                    setQuestions(updated);
+                  }}
+                />
+                <button
+                  type="button"
+                  className={`px-3 py-1 rounded font-bold border ${q.correct_answer_ar === (q.options_ar?.[i] || "") && (q.options_ar?.[i] || "") ? 'bg-green-600 text-white border-green-700' : 'bg-zinc-300 dark:bg-zinc-700 border-zinc-400 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200'}`}
+                  style={{ minWidth: 40 }}
+                  onClick={() => {
+                    if (q.options_ar?.[i]) {
+                      const updated = [...questions];
+                      updated[idx] = { ...q, correct_answer_ar: q.options_ar[i] };
+                      setQuestions(updated);
+                    }
+                  }}
+                  disabled={!(q.options_ar?.[i])}
+                  title="اختر كإجابة صحيحة"
+                >
+                  ✓
+                </button>
+              </div>
+            ))}
           </div>
           <div className="flex gap-4 mt-2">
-            <button
-              type="button"
-              className="text-blue-400 hover:underline font-semibold"
-              onClick={() => {
-                setQuestionForm(q);
-                setEditingQuestionIdx(idx);
-              }}
-            >
-              تعديل
-            </button>
             <button
               type="button"
               className="text-red-400 hover:underline font-semibold"
@@ -66,62 +87,15 @@ export default function VideoQuiz({ questions, setQuestions }: VideoQuizProps) {
           </div>
         </div>
       ))}
-      {/* Add/Edit question form */}
+      {/* Add new question */}
       <div className="mt-4 p-2 rounded bg-zinc-100 dark:bg-zinc-900">
-        <input
-          className="mb-2 p-2 w-full rounded bg-zinc-200 dark:bg-zinc-800 focus:outline-none"
-          placeholder="نص السؤال (بالعربية)"
-          value={questionForm.question_ar || ""}
-          onChange={e => setQuestionForm({ ...questionForm, question_ar: e.target.value })}
-        />
-        {[0,1,2,3].map(i => (
-          <input
-            key={i}
-            className="mb-2 p-2 w-full rounded bg-zinc-200 dark:bg-zinc-800 focus:outline-none"
-            placeholder={`الخيار ${i+1}`}
-            value={questionForm.options_ar?.[i] || ""}
-            onChange={e => {
-              const opts = [...(questionForm.options_ar || [...emptyOptions])];
-              opts[i] = e.target.value;
-              setQuestionForm({ ...questionForm, options_ar: opts });
-            }}
-          />
-        ))}
-        <input
-          className="mb-2 p-2 w-full rounded bg-zinc-200 dark:bg-zinc-800 focus:outline-none"
-          placeholder="الإجابة الصحيحة (بالعربية)"
-          value={questionForm.correct_answer_ar || ""}
-          onChange={e => setQuestionForm({ ...questionForm, correct_answer_ar: e.target.value })}
-        />
-        <input
-          className="mb-2 p-2 w-full rounded bg-zinc-200 dark:bg-zinc-800 focus:outline-none"
-          placeholder="الدرجة (اختياري)"
-          type="number"
-          value={questionForm.score || ""}
-          onChange={e => setQuestionForm({ ...questionForm, score: Number(e.target.value) })}
-        />
         <button
           type="button"
           className="bg-green-600 text-white px-4 py-1 rounded font-bold mr-2"
           onClick={() => {
-            if (!questionForm.question_ar || !(questionForm.options_ar || []).every(opt => opt) || !questionForm.correct_answer_ar) return;
-            const newQuestions = [...(questions || [])];
-            if (editingQuestionIdx !== null) {
-              newQuestions[editingQuestionIdx] = questionForm as Question;
-            } else {
-              newQuestions.push(questionForm as Question);
-            }
-            setQuestions(newQuestions);
-            setQuestionForm({ options_ar: [...emptyOptions] });
-            setEditingQuestionIdx(null);
+            setQuestions([...(questions || []), { question_ar: '', options_ar: ["", "", "", ""], correct_answer_ar: '', score: 1 }]);
           }}
-        >{editingQuestionIdx !== null ? "تحديث السؤال" : "إضافة سؤال"}</button>
-        {editingQuestionIdx !== null && (
-          <button type="button" className="ml-2 text-gray-600" onClick={() => {
-            setQuestionForm({ options_ar: [...emptyOptions] });
-            setEditingQuestionIdx(null);
-          }}>إلغاء</button>
-        )}
+        >إضافة سؤال جديد</button>
       </div>
     </div>
   );
