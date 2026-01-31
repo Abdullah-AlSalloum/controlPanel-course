@@ -1,11 +1,5 @@
 
 "use client";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "../firebase";
-import AuthButton from "../components/AuthButton";
-import dynamic from "next/dynamic";
-
 
 import CoursesCountCard from "../components/CoursesCountCard";
 import VideosCountCard from "../components/VideosCountCard";
