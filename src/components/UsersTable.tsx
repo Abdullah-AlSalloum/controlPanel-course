@@ -6,7 +6,9 @@ interface UserInfo {
   id: string;
   name: string;
   email: string;
-  // gender?: string;
+  createdAt?: string;
+  finalExamDate?: string;
+  finalExamGrade?: number;
 }
 
 export function UsersCountCard() {
@@ -31,20 +33,47 @@ export function UsersTable() {
 
   useEffect(() => {
     const db = getFirestore(app);
-    getDocs(collection(db, "users")).then((snap) => {
-      setUsers(
-        snap.docs.map((doc) => {
-          const d = doc.data();
-          return {
-            id: doc.id,
-            name: d.displayName || d.name || "-",
-            email: d.email || "-",
-            // gender: d.gender || "-",
-          };
-        })
-      );
+    const fetchUsers = async () => {
+      const userSnaps = await getDocs(collection(db, "users"));
+      const userList: UserInfo[] = userSnaps.docs.map((doc) => {
+        const d = doc.data();
+        let createdAt = "-";
+        if (d.createdAt && d.createdAt.seconds) {
+          const date = new Date(d.createdAt.seconds * 1000);
+          createdAt = date.toLocaleDateString();
+        }
+        return {
+          id: doc.id,
+          name: d.displayName || d.name || "-",
+          email: d.email || "-",
+          createdAt,
+        };
+      });
+
+      // Fetch final exam attempts for each user
+      const attemptsSnaps = await getDocs(collection(db, "user_quiz_attempts"));
+      const attempts = attemptsSnaps.docs.filter(doc => doc.data().videoId === "final");
+      const attemptsMap: Record<string, { date: string, grade: number }> = {};
+      attempts.forEach(doc => {
+        const d = doc.data();
+        if (d.userId) {
+          let date = "-";
+          if (d.timestamp && d.timestamp.seconds) {
+            date = new Date(d.timestamp.seconds * 1000).toLocaleDateString();
+          }
+          attemptsMap[d.userId] = { date, grade: d.score || 0 };
+        }
+      });
+
+      // Merge attempts into users
+      setUsers(userList.map(u => ({
+        ...u,
+        finalExamDate: attemptsMap[u.id]?.date || "-",
+        finalExamGrade: attemptsMap[u.id]?.grade ?? undefined,
+      })));
       setLoading(false);
-    });
+    };
+    fetchUsers();
   }, []);
 
   return (
@@ -54,18 +83,24 @@ export function UsersTable() {
           <tr className="bg-slate-100 dark:bg-slate-700">
             <th className="p-3 font-bold text-slate-700 dark:text-slate-100">الاسم</th>
             <th className="p-3 font-bold text-slate-700 dark:text-slate-100">البريد الإلكتروني</th>
+            <th className="p-3 font-bold text-slate-700 dark:text-slate-100">تاريخ التسجيل</th>
+            <th className="p-3 font-bold text-slate-700 dark:text-slate-100">تاريخ اختبار النهاية</th>
+            <th className="p-3 font-bold text-slate-700 dark:text-slate-100">درجة اختبار النهاية</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
-            <tr><td colSpan={3} className="p-6 text-center">جاري التحميل...</td></tr>
+            <tr><td colSpan={5} className="p-6 text-center">جاري التحميل...</td></tr>
           ) : users.length === 0 ? (
-            <tr><td colSpan={3} className="p-6 text-center">لا يوجد مستخدمون.</td></tr>
+            <tr><td colSpan={5} className="p-6 text-center">لا يوجد مستخدمون.</td></tr>
           ) : (
             users.map((u) => (
               <tr key={u.id} className="border-t border-slate-200 dark:border-slate-700">
                 <td className="p-3 text-slate-800 dark:text-slate-100">{u.name}</td>
                 <td className="p-3 text-slate-800 dark:text-slate-100">{u.email}</td>
+                <td className="p-3 text-slate-800 dark:text-slate-100">{u.createdAt || "-"}</td>
+                <td className="p-3 text-slate-800 dark:text-slate-100">{u.finalExamDate || "-"}</td>
+                <td className="p-3 text-slate-800 dark:text-slate-100">{u.finalExamGrade !== undefined ? u.finalExamGrade : "-"}</td>
               </tr>
             ))
           )}

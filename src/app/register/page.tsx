@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { useRouter } from "next/navigation";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -21,6 +22,12 @@ export default function RegisterPage() {
       if (displayName) {
         await updateProfile(userCredential.user, { displayName });
       }
+      // Add user to Firestore with createdAt
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        email,
+        name: displayName,
+        createdAt: serverTimestamp(),
+      }, { merge: true });
       router.push("/");
     } catch (err: any) {
       setError("حدث خطأ أثناء التسجيل. تأكد من صحة البيانات أو أن البريد الإلكتروني غير مستخدم.");
